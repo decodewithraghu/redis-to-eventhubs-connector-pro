@@ -1,0 +1,22 @@
+{
+  "name": "redis-to-eventhubs-connector-pro",
+  "version": "1.0.0",
+  "description": "A production-ready connector for Redis Streams to Azure Event Hubs.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js | pino-pretty",
+    "start:prod": "node src/index.js",
+    "publish-test-data": "node publisher.js"
+  },
+  "dependencies": {
+    "@azure/event-hubs": "^5.9.3",
+    "dotenv": "^16.3.1",
+    "ioredis": "^5.3.2",
+    "pino": "^8.16.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^10.2.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

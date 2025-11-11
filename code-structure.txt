@@ -1,0 +1,12 @@
+redis-to-eventhubs-connector/
+├── src/
+│   ├── config.js               # Loads and validates environment variables
+│   ├── logger.js               # Configures the structured logger
+│   ├── services/
+│   │   ├── RedisService.js     # Handles all Redis Stream logic
+│   │   └── EventHubsService.js # Handles all Azure Event Hubs logic
+│   ├── StreamConnector.js      # The main application class (orchestrator)
+│   └── index.js                # The application entry point
+├── .env
+├── package.json
+└── publisher.js                # (Unchanged from previous example)

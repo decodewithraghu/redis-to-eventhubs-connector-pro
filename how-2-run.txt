@@ -1,0 +1,89 @@
+How to Run
+Install dependencies if you haven't already:
+npm install
+Ensure your .env file has OUTPUT_ADAPTER_TYPE="LOCAL_FILE".
+Start the connector:
+npm start
+You will see logs indicating the file service is being used:
+{"level":30,"time":...,"pid":...,"hostname":"...","name":"...","adapter":"LOCAL_FILE","msg":"Initializing output service..."}
+{"level":30,"time":...,"pid":...,"hostname":"...","name":"...","service":"LocalEventHubService","directory":".../output","msg":"Output directory is ready."}
+In a second terminal, run the publisher:
+npm run publish-test-data
+------------------------------------------------------------------------------------------------------------------------------------
+
+# how to upgrade redis from 3 to 7 
+The Big Picture: Why Your Current Redis is Outdated
+The official Redis project does not maintain a native Windows version. For years, Microsoft maintained a port (the MSOpenTech fork), but it was abandoned around Redis version 3.x. This is almost certainly the version you have installed.
+Because it's so old, it doesn't know about any modern features like Redis Streams, which is why it fails with ERR unknown command 'xgroup'.
+The modern, officially supported way to run Redis on Windows is by using the Windows Subsystem for Linux (WSL 2).
+Method 1 (Highly Recommended): Upgrade using WSL 2
+This is the best and most standard method for modern development on Windows. You will be running the real, official Linux version of Redis, which is fully supported and up-to-date.
+Step 1: Install or Enable WSL 2
+If you don't have WSL installed, it's a one-line command.
+Open PowerShell or Windows Terminal as an Administrator.
+Run the following command. It will install the Windows Subsystem for Linux and a default Ubuntu distribution.
+code
+Powershell
+wsl --install
+Restart your computer when prompted. After restarting, the installation will continue and set up your Ubuntu user.
+Step 2: Stop Your Old Windows Redis Service
+You must stop the old version to free up the port (6379).
+Press Win + R, type services.msc, and hit Enter.
+Scroll down and find the Redis service.
+Right-click on it and select Stop.
+(Optional but recommended) Right-click again, go to Properties, and change the "Startup type" to Disabled so it never starts again.
+Step 3: Install the Latest Redis inside WSL
+Open your Ubuntu terminal (Just search for "Ubuntu" in the Start Menu, or type wsl in PowerShell/Terminal).
+First, update the package lists:
+code
+Bash
+sudo apt update
+sudo apt upgrade -y
+Next, install the latest stable Redis server from the official repositories:
+code
+Bash
+sudo apt install redis-server -y
+Step 4: Start and Verify the New Redis Server
+Start the Redis service inside your WSL terminal:
+code
+Bash
+sudo service redis-server start
+Check that it's running and verify its version (it should be v5.0 or newer):
+code
+Bash
+redis-server --version
+# Expected output: Redis server v=6.x.x or similar
+You can also connect with the client:
+code
+Bash
+redis-cli
+# Inside the client, type:
+ping
+# It should reply with PONG
+Step 5: Run Your Node.js Application
+You do not need to change your code or .env file. WSL 2 automatically forwards network ports to your Windows localhost.
+Your Node.js application, running on Windows, will connect to redis://localhost:6379 and will now be talking to the modern Redis server running inside WSL.
+Simply start your app:
+code
+Bash
+npm start
+The 'xgroup' error will be gone.
+Method 2 (Also Recommended): Upgrade using Docker Desktop
+If you prefer using containers, Docker Desktop for Windows is an excellent choice. It uses WSL 2 as its backend, so it's equally robust.
+Install Docker Desktop for Windows. Download it from the official Docker website and follow the installation instructions.
+Stop your old Windows Redis service (follow Step 2 from the WSL method above to free up the port).
+Open PowerShell or Terminal and run this single command to start a brand new, modern Redis container:
+code
+Powershell
+docker run --name modern-redis -p 6379:6379 -d redis:latest
+--name modern-redis: Gives the container a friendly name.
+-p 6379:6379: Maps port 6379 on your Windows localhost to port 6379 inside the container.
+-d: Runs the container in the background.
+redis:latest: Uses the latest official Redis image.
+Run Your Node.js Application. Just like with WSL, your existing REDIS_URL="redis://localhost:6379" will work perfectly. Start your app and the error will be resolved.
+Summary and Final Recommendation
+Method	Official Support	Performance	Ease of Use	Recommendation
+WSL 2	Yes (Official Linux build)	Excellent	Easy, one-time setup	Highest Recommendation
+Docker Desktop	Yes (Official Linux build)	Excellent	Easy, great for container workflows	Excellent Alternative
+Old Native Windows	No (Abandoned)	Poor	Easy (but wrong)	Do Not Use for New Projects
+For modern development on Windows, using WSL 2 is the best and most direct path to getting a fully-supported, up-to-date Redis server. It will solve your current problem and prevent future issues.
