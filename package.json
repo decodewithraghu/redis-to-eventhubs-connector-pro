@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node src/index.js | pino-pretty",
     "start:prod": "node src/index.js",
-    "publish-test-data": "node publisher.js"
+    "publish-test-data": "node publisher.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration"
   },
   "dependencies": {
     "@azure/event-hubs": "^5.9.3",
@@ -15,6 +19,7 @@
     "pino": "^8.16.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "pino-pretty": "^10.2.3"
   },
   "author": "",

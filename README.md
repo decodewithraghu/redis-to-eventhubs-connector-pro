@@ -111,16 +111,29 @@ You will see logs indicating that events are being published.
 To stop the applications, press Ctrl+C in each terminal.
 
 Troubleshooting
-Error: Missing critical environment variable...
-Solution: This means your .env file is missing, in the wrong location, or misconfigured.
-Ensure the file is named exactly .env.
-Ensure it is in the root directory of the project (next to package.json).
-Check that the variable name (e.g., REDIS_URL) is spelled correctly inside the file.
-Restart the application after making changes.
-Error: ERR unknown command 'xgroup'
-Solution: This is a confirmation that you are connected to a Redis server older than version 5.0.
-Verify your Redis version using redis-cli and the INFO server command.
-Upgrade your Redis server. For Windows users, the best method is to install Redis inside WSL 2 or use Docker.
-Make sure you have stopped any old Redis services running on your machine to avoid port conflicts.
+--------------------
+
+### Error: Missing critical environment variable...
+**Solution**: This means your .env file is missing, in the wrong location, or misconfigured.
+- Ensure the file is named exactly `.env`.
+- Ensure it is in the root directory of the project (next to `package.json`).
+- Check that the variable name (e.g., `REDIS_URL`) is spelled correctly inside the file.
+- Restart the application after making changes.
+
+### Error: ERR unknown command 'xgroup'
+**Solution**: This is a confirmation that you are connected to a Redis server older than version 5.0.
+- Verify your Redis version using `redis-cli` and the `INFO server` command.
+- Upgrade your Redis server. For Windows users, the best method is to install Redis inside WSL 2 or use Docker.
+- Make sure you have stopped any old Redis services running on your machine to avoid port conflicts.
+
+### Application exits immediately: "Failed to connect to Redis"
+**Solution**: The connector cannot reach Redis and will gracefully shutdown instead of hanging.
+- **Verify Redis is running**: Run `redis-cli ping` in your terminal. You should see `PONG`.
+- **Check Redis URL**: Ensure `REDIS_URL` in your `.env` file is correct (default: `redis://localhost:6379`).
+- **Check network connectivity**: If using a remote Redis server, verify firewall rules and network access.
+- **Check Redis logs**: Look for errors in Redis server logs that might indicate why connections are being rejected.
+- **Connection timeout**: The application waits up to 10 seconds and retries 3 times before giving up.
+
+The application will display helpful error messages and exit cleanly if it cannot connect to Redis, rather than hanging indefinitely.
 
 ```
